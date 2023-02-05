@@ -1,5 +1,7 @@
-#
-https://zenn.dev/hsaki/books/golang-grpc-starting/viewer/rpc
+# gPRC Tutorial for a Golang 
+
+## 参考
+[作ってわかる！はじめてのgPRC](https://zenn.dev/hsaki/books/golang-grpc-starting/viewer/rpc)
 
 
 ## 事前準備
