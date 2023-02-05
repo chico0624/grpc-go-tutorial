@@ -1,22 +1,18 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
 	"os"
 	"os/signal"
 
+	"mygrpc/cmd/server/hello"
+	hellopb "mygrpc/pkg/grpc"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-
-	hellopb "mygrpc/pkg/grpc"
 )
-
-type myServer struct {
-	hellopb.UnimplementedGreetingServiceServer
-}
 
 func main() {
 	port := 8080
@@ -29,7 +25,7 @@ func main() {
 	s := grpc.NewServer()
 
 	// gRPCサーバにGreetingServiceを登録する
-	hellopb.RegisterGreetingServiceServer(s, NewMyServer())
+	hellopb.RegisterGreetingServiceServer(s, hello.NewMyServer())
 
 	reflection.Register(s)
 
@@ -43,13 +39,4 @@ func main() {
 	<-quit
 	log.Println("stoping gRPC server...")
 	s.GracefulStop()
-}
-func (s *myServer) Hello(ctx context.Context, req *hellopb.HelloRequest) (*hellopb.HelloResponse, error) {
-	return &hellopb.HelloResponse{
-		Message: fmt.Sprintf("Hello, %s!", req.GetName()),
-	}, nil
-}
-
-func NewMyServer() *myServer {
-	return &myServer{}
 }
