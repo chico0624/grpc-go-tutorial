@@ -2,7 +2,9 @@ package hello
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"io"
 	hellopb "mygrpc/pkg/grpc"
 	"time"
 )
@@ -35,4 +37,26 @@ func (s *myServer) HelloServerStream(req *hellopb.HelloRequest, stream hellopb.G
 	}
 
 	return nil
+}
+
+// Client Stream RPC
+func (s *myServer) HelloClientStream(stream hellopb.GreetingService_HelloClientStreamServer) error {
+	nameList := make([]string, 0)
+
+	for {
+		req, err := stream.Recv()
+		if errors.Is(err, io.EOF) {
+			massage := fmt.Sprintf("Hello %v", nameList)
+
+			return stream.SendAndClose(
+				&hellopb.HelloResponse{
+					Message: massage,
+				},
+			)
+		}
+		if err != nil {
+			return err
+		}
+		nameList = append(nameList, req.GetName())
+	}
 }
