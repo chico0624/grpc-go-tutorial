@@ -7,6 +7,10 @@ import (
 	"io"
 	hellopb "mygrpc/pkg/grpc"
 	"time"
+
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type myServer struct {
@@ -19,9 +23,15 @@ func NewMyServer() *myServer {
 
 // Unary RPC
 func (s *myServer) Hello(ctx context.Context, req *hellopb.HelloRequest) (*hellopb.HelloResponse, error) {
+
+	// 必ずエラーが発生するようにする
+	stat := status.New(codes.Unknown, "unknown error occurred")
+	stat, _ = stat.WithDetails(&errdetails.DebugInfo{Detail: "detail reason of error."})
+	err := stat.Err()
+
 	return &hellopb.HelloResponse{
 		Message: fmt.Sprintf("Hello, %s!", req.GetName()),
-	}, nil
+	}, err
 }
 
 // Server Stream RPC
