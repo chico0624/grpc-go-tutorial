@@ -24,8 +24,14 @@ func main() {
 	}
 
 	s := grpc.NewServer(
-		grpc.UnaryInterceptor(interceptor.MyUnaryServerInterceptor1),
-		grpc.StreamInterceptor(interceptor.MyStreamServerInterceptor1),
+		grpc.ChainUnaryInterceptor(
+			interceptor.MyUnaryServerInterceptor1,
+			interceptor.MyUnaryServerInterceptor2,
+		),
+		grpc.ChainStreamInterceptor(
+			interceptor.MyStreamServerInterceptor1,
+			interceptor.MyStreamServerInterceptor2,
+		),
 	)
 
 	// gRPCサーバにGreetingServiceを登録する
