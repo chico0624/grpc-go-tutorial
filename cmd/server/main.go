@@ -8,6 +8,7 @@ import (
 	"os/signal"
 
 	"mygrpc/cmd/server/hello"
+	"mygrpc/cmd/server/interceptor"
 	hellopb "mygrpc/pkg/grpc"
 
 	"google.golang.org/grpc"
@@ -22,7 +23,7 @@ func main() {
 		panic(err)
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(grpc.UnaryInterceptor(interceptor.MyUnaryServerInterceptor1))
 
 	// gRPCサーバにGreetingServiceを登録する
 	hellopb.RegisterGreetingServiceServer(s, hello.NewMyServer())
