@@ -23,7 +23,10 @@ func main() {
 		panic(err)
 	}
 
-	s := grpc.NewServer(grpc.UnaryInterceptor(interceptor.MyUnaryServerInterceptor1))
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(interceptor.MyUnaryServerInterceptor1),
+		grpc.StreamInterceptor(interceptor.MyStreamServerInterceptor1),
+	)
 
 	// gRPCサーバにGreetingServiceを登録する
 	hellopb.RegisterGreetingServiceServer(s, hello.NewMyServer())
